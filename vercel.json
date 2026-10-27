@@ -3,5 +3,15 @@
   "framework": null,
   "buildCommand": null,
   "installCommand": "",
-  "outputDirectory": "."
+  "outputDirectory": ".",
+  "rewrites": [
+    {
+      "source": "/src/:path*",
+      "destination": "/:path*"
+    },
+    {
+      "source": "/vendor/stockfish/:path*",
+      "destination": "/:path*"
+    }
+  ]
 }
