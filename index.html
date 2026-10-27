@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#111410" />
+    <meta
+      name="description"
+      content="Sow Chess is a thoughtful, focused place to play chess."
+    />
+    <title>Sow Chess — Play thoughtfully</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <script defer src="./src/chess-wasm.js"></script>
+    <script defer src="./src/engine.js"></script>
+    <script defer src="./src/stockfish-bundle.js"></script>
+    <script defer src="./src/stockfish.js"></script>
+    <script defer src="./src/app.js"></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="site-header">
+        <a class="brand" href="#main" aria-label="Sow Chess home">
+          <span class="brand-mark" aria-hidden="true">♞</span>
+          <span class="brand-name">sow<span>chess</span></span>
+        </a>
+        <div class="header-center" id="mode-label" aria-label="Game mode">PASS &amp; PLAY</div>
+        <button class="icon-button header-menu" type="button" aria-label="More options" title="More options">
+          <span aria-hidden="true">•••</span>
+        </button>
+      </header>
+
+      <main class="main-layout" id="main">
+        <section class="play-area" aria-label="Chess game">
+          <div class="game-heading">
+            <div>
+              <p class="eyebrow">A quiet game, well played</p>
+              <h1>Play chess</h1>
+            </div>
+            <button class="new-game-button" id="new-game" type="button">
+              <span aria-hidden="true">＋</span> New game
+            </button>
+          </div>
+
+          <div class="player-card opponent-card" id="black-player">
+            <div class="player-avatar black-avatar" aria-hidden="true">♚</div>
+            <div class="player-details">
+              <strong id="black-name">Black</strong>
+              <span id="black-description">Playing locally</span>
+            </div>
+            <div class="captured-pieces" id="black-captured" aria-label="Black captured pieces"></div>
+            <span class="turn-indicator" id="black-turn" aria-label="Black to move"></span>
+          </div>
+
+          <div class="board-frame">
+            <div class="board" id="chessboard" role="grid" aria-label="Chessboard"></div>
+          </div>
+
+          <div class="player-card self-card" id="white-player">
+            <div class="player-avatar white-avatar" aria-hidden="true">♔</div>
+            <div class="player-details">
+              <strong id="white-name">White</strong>
+              <span id="white-description">You</span>
+            </div>
+            <div class="captured-pieces" id="white-captured" aria-label="White captured pieces"></div>
+            <span class="turn-indicator active" id="white-turn" aria-label="White to move"></span>
+          </div>
+
+          <div class="board-controls" aria-label="Board controls">
+            <button class="text-button" id="flip-board" type="button" title="Flip board">
+              <span class="control-icon" aria-hidden="true">⟳</span> Flip board
+            </button>
+            <div class="control-divider" aria-hidden="true"></div>
+            <button class="text-button" id="undo-move" type="button" title="Undo last move">
+              <span class="control-icon undo-icon" aria-hidden="true">↶</span> Undo
+            </button>
+            <div class="control-divider" aria-hidden="true"></div>
+            <button class="text-button" id="copy-pgn" type="button" title="Copy game as PGN">
+              <span class="control-icon" aria-hidden="true">↗</span> PGN
+            </button>
+            <div class="control-divider" aria-hidden="true"></div>
+            <button class="text-button" id="open-position" type="button" title="Copy or load a FEN position">
+              <span class="control-icon" aria-hidden="true">⌗</span> Position
+            </button>
+          </div>
+        </section>
+
+        <aside class="game-panel" aria-label="Game details">
+          <section class="status-card" aria-live="polite" aria-atomic="true">
+            <div class="status-heading">
+              <span class="status-dot" id="status-dot"></span>
+              <span class="eyebrow">GAME STATUS</span>
+            </div>
+            <h2 id="game-status">White to move</h2>
+            <p id="status-detail">Make your opening move.</p>
+            <div class="status-rule"></div>
+            <div class="game-meta">
+              <span>Mode</span><strong id="game-mode">Pass &amp; Play</strong>
+              <span>Moves</span><strong id="move-count">0</strong>
+            </div>
+          </section>
+
+          <section class="moves-card" aria-labelledby="moves-title">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">THE GAME SO FAR</p>
+                <h2 id="moves-title">Move history</h2>
+              </div>
+              <span class="move-total" id="move-total">0</span>
+            </div>
+            <div class="move-list" id="move-list" role="log" aria-label="Moves in this game" aria-live="polite">
+              <div class="empty-moves" id="empty-moves">
+                <span class="empty-mark" aria-hidden="true">♙</span>
+                <p>Your moves will appear here.</p>
+                <span>Every great game starts somewhere.</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="engine-card" aria-labelledby="engine-title">
+            <div class="section-heading engine-heading">
+              <div>
+                <p class="eyebrow">STOCKFISH 19</p>
+                <h2 id="engine-title">Position analysis</h2>
+              </div>
+              <span class="engine-state" id="engine-state" aria-live="polite">Ready</span>
+            </div>
+            <div class="engine-evaluation">
+              <span class="eyebrow">WHITE EVALUATION</span>
+              <strong id="engine-evaluation">—</strong>
+            </div>
+            <p class="engine-line" id="engine-line">Analyze the current position to see Stockfish’s top line.</p>
+            <p class="best-move" id="best-move" aria-live="polite">Best move hint will appear here.</p>
+            <div class="engine-actions">
+              <button class="secondary-button" id="analyze-position" type="button">Analyze position</button>
+              <button class="secondary-button" id="best-move-hint" type="button">Best move hint</button>
+            </div>
+            <button class="engine-mode-button" id="toggle-engine" type="button" aria-pressed="false">
+              <span aria-hidden="true">♟</span> Play vs Stockfish
+            </button>
+            <p class="engine-note">Runs on this device. Analysis is private and offline.</p>
+          </section>
+
+          <section class="secondary-controls" aria-label="Game actions">
+            <button class="secondary-button" id="offer-draw" type="button">
+              <span aria-hidden="true">＝</span> Offer draw
+            </button>
+            <button class="secondary-button resign-button" id="resign" type="button">
+              <span aria-hidden="true">⚑</span> Resign
+            </button>
+          </section>
+
+          <p class="privacy-note"><span aria-hidden="true">◉</span> This game stays on your device.</p>
+        </aside>
+      </main>
+
+      <footer class="site-footer">
+        <span>Take your time.</span>
+        <span class="footer-dot" aria-hidden="true">·</span>
+        <span>Enjoy the game.</span>
+        <span class="footer-dot" aria-hidden="true">·</span>
+        <a href="./vendor/stockfish/Copying.txt">Stockfish license</a>
+      </footer>
+    </div>
+
+    <dialog class="promotion-dialog" id="promotion-dialog" aria-labelledby="promotion-title">
+      <form method="dialog" class="promotion-content">
+        <p class="eyebrow">A PAWN HAS REACHED THE END</p>
+        <h2 id="promotion-title">Choose a piece</h2>
+        <div class="promotion-choices" id="promotion-choices"></div>
+        <button class="promotion-cancel" value="cancel">Cancel</button>
+      </form>
+    </dialog>
+
+    <dialog class="promotion-dialog" id="draw-dialog" aria-labelledby="draw-title">
+      <form method="dialog" class="promotion-content">
+        <p class="eyebrow">A FRIENDLY OFFER</p>
+        <h2 id="draw-title">Accept a draw?</h2>
+        <p class="dialog-copy" id="draw-copy">Your opponent offers a draw.</p>
+        <div class="dialog-actions">
+          <button class="secondary-button" id="decline-draw" type="button">Decline</button>
+          <button class="dialog-primary" id="accept-draw" type="button">Accept draw</button>
+        </div>
+        <button class="promotion-cancel" value="cancel">Close</button>
+      </form>
+    </dialog>
+
+    <dialog class="promotion-dialog position-dialog" id="position-dialog" aria-labelledby="position-title">
+      <form method="dialog" class="promotion-content">
+        <p class="eyebrow">CHESS POSITION</p>
+        <h2 id="position-title">FEN position</h2>
+        <label class="sr-only" for="position-fen">Forsyth–Edwards Notation</label>
+        <textarea class="position-input" id="position-fen" rows="3" spellcheck="false"></textarea>
+        <p class="dialog-copy" id="position-help">Copy the current position or enter a valid FEN to set up a new game.</p>
+        <div class="dialog-actions">
+          <button class="secondary-button" id="copy-fen" type="button">Copy FEN</button>
+          <button class="dialog-primary" id="load-fen" type="button">Load position</button>
+        </div>
+        <button class="promotion-cancel" value="cancel">Close</button>
+      </form>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>
